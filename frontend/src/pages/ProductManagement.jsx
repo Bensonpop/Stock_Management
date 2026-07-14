@@ -53,7 +53,7 @@ const ProductManagement = () => {
       });
       setSuccess('Product created successfully');
       setFormData({ name: '', description: '', sku: '', quantity: '', storeId: '', threshold: 10 });
-      fetchData(); // Refresh list
+      fetchData(); 
     } catch (err) {
       setError(err.message);
     }

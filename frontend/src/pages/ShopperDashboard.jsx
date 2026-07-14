@@ -13,8 +13,6 @@ const ShopperDashboard = () => {
   const fetchData = async (threshold = '') => {
     setLoading(true);
     try {
-      // API might support query string ?threshold=X based on instructions:
-      // "listing stock supports filtering to entries at or below a given threshold (passed as a query parameter)"
       const endpoint = threshold !== '' ? `/stocks?threshold=${threshold}` : '/stocks';
       const res = await apiFetch(endpoint);
       setStocks(Array.isArray(res) ? res : []);

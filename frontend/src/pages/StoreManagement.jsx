@@ -40,7 +40,7 @@ const StoreManagement = () => {
       });
       setSuccess('Store created successfully');
       setFormData({ name: '', location: '' });
-      fetchData(); // Refresh list
+      fetchData(); 
     } catch (err) {
       setError(err.message);
     }

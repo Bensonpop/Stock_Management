@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  title: Stock Movement API
+  description: API for managing products, stores, and stock transfers.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+          enum: [Admin, Shopper]
+    
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sku:
+          type: string
+        quantity:
+          type: integer
+        storeId:
+          type: string
+        threshold:
+          type: integer
+          
+    Store:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+          
+    Stock:
+      type: object
+      properties:
+        _id:
+          type: string
+        productId:
+          type: string
+        storeId:
+          type: string
+        quantity:
+          type: integer
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, password, role]
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [Admin, Shopper]
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Validation error
+
+  /auth/login:
+    post:
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, password]
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Authentication successful
+        '401':
+          description: Invalid credentials
+
+  /products:
+    get:
+      summary: Get all products
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of products
+    post:
+      summary: Create a new product (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+
+  /stores:
+    get:
+      summary: Get all stores
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of stores
+    post:
+      summary: Create a new store (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Store'
+      responses:
+        '201':
+          description: Store created
+
+  /stocks:
+    get:
+      summary: Get all stock across all stores
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: threshold
+          schema:
+            type: integer
+          description: Filter stock quantities equal or below this threshold
+      responses:
+        '200':
+          description: Array of stock entries
+    post:
+      summary: Adjust stock quantity (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, storeId, quantity]
+              properties:
+                productId:
+                  type: string
+                storeId:
+                  type: string
+                quantity:
+                  type: integer
+      responses:
+        '201':
+          description: Stock adjusted
+
+  /stocks/transfer:
+    post:
+      summary: Transfer stock between stores atomically (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, fromStoreId, toStoreId, quantity]
+              properties:
+                productId:
+                  type: string
+                fromStoreId:
+                  type: string
+                toStoreId:
+                  type: string
+                quantity:
+                  type: integer
+      responses:
+        '200':
+          description: Transfer successful
+        '400':
+          description: Validation or insufficient stock error

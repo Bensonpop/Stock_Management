@@ -7,8 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for token and decode user data (normally we'd hit a /me endpoint, 
-    // but here we can just store user details in localStorage on login)
+    
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     

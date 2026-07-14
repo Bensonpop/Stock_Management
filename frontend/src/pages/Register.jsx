@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 const Register = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Shopper'); // Allow selecting role for testing
+  const [role, setRole] = useState('Shopper'); 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   

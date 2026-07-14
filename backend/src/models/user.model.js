@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// Automatically hash the password before saving a new or modified user
+
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
 
@@ -32,7 +32,7 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Instance method to safely compare entered password with the database hash
+
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
